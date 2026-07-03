@@ -1,0 +1,4 @@
+interface:
+  display_name: "Windows UTF-8 Guard"
+  short_description: "Prevent Korean mojibake on Windows"
+  default_prompt: "Use $windows-utf8-guard before editing Korean or UTF-8 text files on Windows."
