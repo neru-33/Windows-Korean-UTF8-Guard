@@ -1,15 +1,15 @@
 ---
 name: windows-utf8-guard
-description: Prevent Korean/non-ASCII UTF-8 mojibake and accidental text corruption on Windows. Use before reading or editing non-ASCII files, diagnosing garbled text such as "�", "?뚰", "蹂묒", "媛", or "吏", or passing Korean text through PowerShell, Get-Content, Python stdout, subprocess arguments, file paths, JSON, YAML, Markdown, source files, or large CSV output.
+description: Opt-in guard for legacy Windows console encoding problems. Use only when the user explicitly names $windows-utf8-guard, or when work must run through Windows PowerShell/cmd/Windows Python stdio and Korean/non-ASCII text is already garbled or at clear risk. Do not use for normal WSL, Linux, macOS, bash, or UTF-8-safe terminal workflows.
 ---
 
 # Windows UTF-8 Guard
 
-## Core Rule
+## Routing Rule
 
-Treat Windows shell output as untrusted for Korean/non-ASCII text. Distinguish terminal display mojibake from real file corruption before editing, and never copy garbled console text back into source, YAML, Markdown, JSON, tests, or fixtures.
+Skip this skill by default in WSL/Linux/bash workflows. Use normal UTF-8 tooling there unless the task crosses into Windows PowerShell, cmd.exe, Windows-native Python stdio, or a Windows app/export that has already shown mojibake.
 
-Prefer UTF-8-aware file APIs over shell text pipelines. Use PowerShell as a last-mile command runner, not as the source of truth for file contents.
+When the skill does apply, treat Windows shell output as untrusted for Korean/non-ASCII text. Distinguish terminal display mojibake from real file corruption before editing, and never copy garbled console text back into source, YAML, Markdown, JSON, tests, or fixtures.
 
 ## Safe Workflow
 
@@ -37,7 +37,7 @@ Prefer UTF-8-aware file APIs over shell text pipelines. Use PowerShell as a last
 - **Python stdout:** A script may read UTF-8 correctly but fail with CP949 `UnicodeEncodeError` when printing. Reconfigure stdout or escape diagnostics.
 - **CLI arguments:** Korean text passed through PowerShell here-strings, inline scripts, or command arguments can arrive as `???`. For batch tests, build Korean strings inside Python, read them from UTF-8 files/JSON, or pass UTF-8 stdin from a trusted runtime.
 - **Non-ASCII paths:** If a hard-coded Korean path appears missing, search from an ASCII-safe parent by filename, then operate on the discovered `Path` object. Print paths with `repr()` or `ascii(str(path))` when debugging.
-- **Large CSVs:** Do not dump large CSVs through PowerShell. Stream with Python `csv.DictReader`, use `encoding="utf-8-sig"` for CSV exports, and print bounded ASCII-safe summaries. Use `scripts/csv_stream_probe.py <csv-path>` when useful.
+- **Large Windows CSV exports:** Do not dump large CSVs through PowerShell. Stream with Python `csv.DictReader`, use `encoding="utf-8-sig"` for Windows-facing CSV exports, and print bounded ASCII-safe summaries. Use `scripts/csv_stream_probe.py <csv-path>` when useful.
 - **Inline regex/scripts:** Avoid complex regex-heavy Python embedded in PowerShell when escaping or encoding is already suspect. Put the script in a `.py` file or verify patterns with `ascii(pattern)`.
 
 ## PowerShell Fallback

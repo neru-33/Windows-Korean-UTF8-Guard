@@ -1,6 +1,8 @@
 # Windows Korean UTF-8 Guard
 
-Windows + PowerShell 환경에서 한글/비 ASCII 텍스트를 다룰 때 생기는 UTF-8 깨짐, 잘못된 파일 수정, 콘솔 출력 오판을 줄이기 위한 Codex 스킬입니다.
+Windows + PowerShell/cmd 환경에서 한글/비 ASCII 텍스트를 다룰 때 생기는 UTF-8 깨짐, 잘못된 파일 수정, 콘솔 출력 오판을 줄이기 위한 Codex 스킬입니다.
+
+WSL, Linux, macOS, bash처럼 UTF-8 처리가 안정적인 환경에서는 기본적으로 사용할 필요가 없습니다. 이 스킬은 Windows 네이티브 셸이나 Windows 앱/export를 경유하면서 깨짐이 실제로 보일 때 쓰는 opt-in guard입니다.
 
 이 스킬은 다음 상황에서 사용하도록 설계되었습니다.
 
@@ -49,14 +51,14 @@ New-Item -ItemType Directory -Force -Path $skillRoot
 Copy-Item -Recurse -Force ".\windows-utf8-guard" $skillRoot
 ```
 
-설치 후 새 Codex 세션에서 `$windows-utf8-guard`를 사용할 수 있습니다.
+설치 후 새 Codex 세션에서 `$windows-utf8-guard`를 사용할 수 있습니다. 일반 WSL/bash 작업에서는 자동으로 쓰기보다, Windows PowerShell/cmd 인코딩 문제가 의심될 때 명시적으로 호출하는 용도를 권장합니다.
 
 ## 사용법
 
 Codex에게 한글 파일, Windows 인코딩, PowerShell 출력 깨짐, CSV 깨짐 등을 다루게 할 때 다음처럼 요청합니다.
 
 ```text
-Use $windows-utf8-guard before editing this Korean YAML file.
+Use $windows-utf8-guard to diagnose this Korean text that broke in Windows PowerShell.
 ```
 
 또는 한국어로 요청해도 됩니다.
